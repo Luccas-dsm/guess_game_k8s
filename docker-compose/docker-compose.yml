@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secretpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: 
+      context: ../backend
+      dockerfile: Dockerfile
+    environment:
+      FLASK_APP: run.py
+      FLASK_DB_TYPE: postgres
+      FLASK_DB_USER: postgres
+      FLASK_DB_NAME: postgres
+      FLASK_DB_PASSWORD: secretpass
+      FLASK_DB_HOST: postgres
+      FLASK_DB_PORT: 5432
+    depends_on:
+      - postgres
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+
+  frontend:
+    build: 
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BACKEND_URL: http://localhost:3001/api
+    depends_on:
+      - backend
+
+  proxy:
+    build: 
+      context: ../nginx
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - frontend
+      - backend
+    restart: on-failure
+
+volumes:
+  postgres_data:
