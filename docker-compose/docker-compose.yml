@@ -2,13 +2,38 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secretpass
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--auth-host=md5"
     ports:
-      - "5433:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=4MB
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+      -c tcp_keepalives_idle=600
+      -c tcp_keepalives_interval=30
+      -c tcp_keepalives_count=3
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   backend:
     build: 
@@ -17,39 +42,41 @@ services:
     environment:
       FLASK_APP: run.py
       FLASK_DB_TYPE: postgres
-      FLASK_DB_USER: postgres
-      FLASK_DB_NAME: postgres
-      FLASK_DB_PASSWORD: secretpass
+      FLASK_DB_USER: ${POSTGRES_USER}
+      FLASK_DB_NAME: ${POSTGRES_DB}
+      FLASK_DB_PASSWORD: ${POSTGRES_PASSWORD}
       FLASK_DB_HOST: postgres
       FLASK_DB_PORT: 5432
+      # Configurações de conexão
+      PGCONNECT_TIMEOUT: 10
+      PGCOMMAND_TIMEOUT: 30
     depends_on:
-      - postgres
-    restart: on-failure
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
     deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 5
+      replicas: 2
 
   frontend:
     build: 
       context: ../frontend
       dockerfile: Dockerfile
       args:
-        REACT_APP_BACKEND_URL: http://localhost:3001/api
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
     depends_on:
       - backend
+    restart: unless-stopped
 
   proxy:
     build: 
       context: ../nginx
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
+      - "${PROXY_PORT}:3001"
     depends_on:
       - frontend
       - backend
-    restart: on-failure
+    restart: unless-stopped
 
 volumes:
   postgres_data:
