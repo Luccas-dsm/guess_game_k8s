@@ -4,7 +4,7 @@ Um jogo de adivinhação completo implementado com **Flask + React + PostgreSQL*
 
 ## 🚀 Quick Start
 
-### Docker Compose (Desenvolvimento)
+### Docker Compose (Desenvolvimento) (precisa de manutenção)
 
 ```bash
 cd docker-compose
@@ -12,7 +12,7 @@ cd docker-compose
 # Acesse: http://localhost:3001
 ```
 
-### Kubernetes (Produção)
+### Kubernetes (Produção) (funcional)
 
 ```bash
 cd kubernetes
@@ -20,7 +20,7 @@ cd kubernetes
 # Acesse: http://localhost:30300
 ```
 
-### Helm Charts (Enterprise)
+### Helm Charts (Enterprise) (precisa de manutenção)
 
 ```bash
 cd helm
@@ -308,18 +308,6 @@ kubectl logs <pod-name> -n guess-game
 kubectl get pods -l app=postgres -n guess-game
 kubectl logs -l app=postgres -n guess-game
 ```
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie sua feature branch (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Add nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ## 🔗 Links Úteis
 
