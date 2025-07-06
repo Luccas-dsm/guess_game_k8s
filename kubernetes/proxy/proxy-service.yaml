@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy-service
+  namespace: guess-game
+  labels:
+    app: proxy
+spec:
+  selector:
+    app: proxy
+  ports:
+    - port: 3001
+      targetPort: 3001
+      nodePort: 30300 # Porta externa para acesso
+  type: NodePort

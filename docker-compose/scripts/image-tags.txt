@@ -1,0 +1,11 @@
+# Guess Game Images - latest
+# Gerado em: Sat, Jul  5, 2025  2:28:17 PM
+
+Backend: luccasdsm/guess-game-backend:latest
+Frontend: luccasdsm/guess-game-frontend:latest
+Proxy: luccasdsm/guess-game-proxy:latest
+
+# URLs Docker Hub:
+# https://hub.docker.com/r/luccasdsm/guess-game-backend
+# https://hub.docker.com/r/luccasdsm/guess-game-frontend
+# https://hub.docker.com/r/luccasdsm/guess-game-proxy

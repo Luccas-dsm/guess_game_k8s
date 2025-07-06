@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configurações
-DOCKER_USERNAME=${1:-"seuusuario"}  # Substitua pelo seu usuário do Docker Hub
+DOCKER_USERNAME=${1:-"luccasdsm"}  # Substitua pelo seu usuário do Docker Hub
 VERSION=${2:-"latest"}
 PROJECT_NAME="guess-game"
 

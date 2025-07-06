@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configurações
-DOCKER_USERNAME=${1:-"seuusuario"}
+DOCKER_USERNAME=${1:-"luccasdsm"}
 VERSION=${2:-"latest"}
 PROJECT_NAME="guess-game"
 
