@@ -1,0 +1,16 @@
+apiVersion: v2
+name: guess-game-k8s
+description: A Helm chart for Guess Game application
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - game
+  - flask
+  - react
+  - postgresql
+home: https://github.com/luccasdsm/guess_game_k8s
+sources:
+  - https://github.com/luccasdsm/guess_game_k8s
+maintainers:
+  - name: Luccas Silva

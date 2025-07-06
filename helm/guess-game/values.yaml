@@ -1,0 +1,22 @@
+global:
+  namespace: guess-game
+  imageRegistry: docker.io/luccasdsm
+
+postgresql:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 15-alpine
+  database: postgres
+  username: postgres
+  password: secretpass
+
+backend:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: guess-game-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 5000
