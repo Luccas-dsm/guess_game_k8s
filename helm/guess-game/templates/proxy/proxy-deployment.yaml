@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: proxy-deployment
-  namespace: guess-game
+  namespace: {{ .Values.global.namespace }}
   labels:
     app: proxy
 spec:
@@ -17,13 +17,6 @@ spec:
     spec:
       containers:
       - name: proxy
-        image: luccasdsm/guess-game-proxy:v1.1.0
+        image: docker.io/luccasdsm/guess-game-proxy:latest
         ports:
         - containerPort: 3001
-        resources:
-          requests:
-            memory: 32Mi
-            cpu: 25m
-          limits:
-            memory: 64Mi
-            cpu: 50m
