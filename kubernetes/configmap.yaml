@@ -14,5 +14,5 @@ data:
   FLASK_APP: "run.py"
   FLASK_DB_TYPE: "postgres"
 
-  # Frontend
+  # Frontend - URL CORRETA para Kubernetes
   REACT_APP_BACKEND_URL: "http://localhost:30300/api"

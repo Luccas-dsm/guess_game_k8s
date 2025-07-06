@@ -20,6 +20,12 @@ spec:
           image: luccasdsm/guess-game-frontend:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: REACT_APP_BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: guess-game-config
+                  key: REACT_APP_BACKEND_URL
           resources:
             requests:
               memory: "64Mi"
