@@ -20,3 +20,15 @@ backend:
     pullPolicy: IfNotPresent
   service:
     port: 5000
+
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: guess-game-frontend
+    tag: latest
+    pullPolicy: Always
+  service:
+    port: 3000
+  env:
+    REACT_APP_BACKEND_URL: "http://localhost:30300/api"

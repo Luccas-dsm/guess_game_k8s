@@ -1,14 +1,12 @@
-{{- if .Values.backend.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-deployment
-  namespace: {{ .Values.global.namespace }}
+  namespace: guess-game
   labels:
     app: backend
-    {{- include "guess-game.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.backend.replicaCount }}
+  replicas: 3
   selector:
     matchLabels:
       app: backend
@@ -17,39 +15,59 @@ spec:
       labels:
         app: backend
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:15-alpine
+          env:
+            - name: PGPASSWORD
+              value: secretpass
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL..."
+              until pg_isready -h postgres-service -p 5432 -U postgres; do
+                echo "PostgreSQL not ready, waiting..."
+                sleep 2
+              done
+              echo "PostgreSQL is ready!"
       containers:
-      - name: backend
-        image: {{ include "guess-game.image" (dict "Values" .Values "repository" .Values.backend.image.repository "tag" .Values.backend.image.tag) }}
-        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
-        ports:
-        - containerPort: {{ .Values.backend.service.port }}
-        env:
-        - name: FLASK_APP
-          value: "run.py"
-        - name: FLASK_DB_TYPE
-          value: "postgres"
-        - name: FLASK_DB_USER
-          value: {{ .Values.postgresql.username }}
-        - name: FLASK_DB_NAME
-          value: {{ .Values.postgresql.database }}
-        - name: FLASK_DB_HOST
-          value: "postgres-service"
-        - name: FLASK_DB_PORT
-          value: "5432"
-        - name: FLASK_DB_PASSWORD
-          value: {{ .Values.postgresql.password }}
-        resources:
-          {{- toYaml .Values.backend.resources | nindent 10 }}
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: {{ .Values.backend.service.port }}
-          initialDelaySeconds: 60
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: {{ .Values.backend.service.port }}
-          initialDelaySeconds: 10
-          periodSeconds: 10
-{{- end }}
+        - name: backend
+          image: docker.io/luccasdsm/guess-game-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_APP
+              value: "run.py"
+            - name: FLASK_DB_TYPE
+              value: "postgres"
+            - name: FLASK_DB_USER
+              value: "postgres"
+            - name: FLASK_DB_NAME
+              value: "postgres"
+            - name: FLASK_DB_HOST
+              value: "postgres-service"
+            - name: FLASK_DB_PORT
+              value: "5432"
+            - name: FLASK_DB_PASSWORD
+              value: "secretpass"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
