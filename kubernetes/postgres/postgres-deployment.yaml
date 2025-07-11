@@ -22,30 +22,29 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: guess-game-config
-                  key: POSTGRES_DB
+              value: "postgres"
             - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: guess-game-config
-                  key: POSTGRES_USER
+              value: "postgres"
             - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: guess-game-secrets
-                  key: POSTGRES_PASSWORD
+              value: "secretpass"
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "256Mi"
+              cpu: "200m"
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 10
+            periodSeconds: 5
           livenessProbe:
             exec:
               command:
@@ -54,15 +53,6 @@ spec:
                 - postgres
             initialDelaySeconds: 30
             periodSeconds: 10
-          readinessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 5
-            periodSeconds: 5
       volumes:
         - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+          emptyDir: {}

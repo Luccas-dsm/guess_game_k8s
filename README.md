@@ -115,8 +115,10 @@ guess-game-docker-k8s/
 ### Kubernetes
 
 ```bash
+# Navegar para pasta Kubernetes
+cd Kubernetes
 # Deploy completo
-./kubernetes/scripts/deploy.sh
+./scripts/deploy.sh
 
 # Verificar status
 kubectl get all -n guess-game
