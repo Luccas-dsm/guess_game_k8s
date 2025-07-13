@@ -24,7 +24,7 @@ cd kubernetes
 
 ```bash
 cd helm
-helm install guess-game-helm ./guess-game
+./scripts/deploy-helm.sh
 # Acesse: http://localhost:30300
 ```
 
@@ -88,7 +88,7 @@ guess-game-docker-k8s/
 
 - **Use quando**: Gestão de releases, multiple environments, rollbacks
 - **Características**: Versionamento, templates, valores customizáveis
-- **Comando**: `cd helm && helm install guess-game-helm ./guess-game`
+- **Comando**: `cd helm && ./scripts/deploy-helm.sh`
 - **URL**: http://localhost:30300
 
 ## ⚡ Comandos Essenciais
@@ -179,10 +179,10 @@ kubectl logs -l app=backend -n guess-game -f
 
 ```bash
 # Backend
-curl http://localhost:3001/api/health
+curl http://localhost:30300/api/health
 
 # Teste criação de jogo
-curl -X POST http://localhost:3001/api/create \
+curl -X POST http://localhost:30300/api/create \
   -H "Content-Type: application/json" \
   -d '{"password":"teste"}'
 ```
@@ -198,27 +198,12 @@ kubectl top pods -n guess-game         # Kubernetes
 kubectl get hpa -n guess-game
 ```
 
-## 🚢 Deploy em Produção
-
-### 1. Prepare as imagens
+### Checks Final
 
 ```bash
-cd images
-./build-images.sh seuuruario v1.0.0
-./push-images.sh seuusuario v1.0.0
-```
+# execute na pasta raiz do projeto
+./scripts/final-check.sh
 
-### 2. Configure o ambiente
-
-```bash
-# Kubernetes
-kubectl create namespace guess-game-prod
-kubectl apply -f kubernetes/ -n guess-game-prod
-
-# Helm
-helm install guess-game-prod ./helm/guess-game \
-  --set global.namespace=guess-game-prod \
-  --set global.imageRegistry=docker.io/seuusuario
 ```
 
 ## 📊 Recursos Implementados
